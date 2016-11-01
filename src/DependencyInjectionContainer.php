@@ -25,6 +25,9 @@ class DependencyInjectionContainer implements DependencyInjectionContainerInterf
 	 */
 	public function bind($className, \Closure $closure)
 	{
+		if (!is_string($className) || empty(trim($className))) {
+			throw new \InvalidArgumentException('Invalid class name');
+		}
 		$this->binds[$className] = $closure;
 	}
 
@@ -36,12 +39,21 @@ class DependencyInjectionContainer implements DependencyInjectionContainerInterf
 	public function get($className)
 	{
 		if (!isset($this->cache[$className])) {
-			if (!isset($this->binds[$className])) {
+			if (!$this->has($className)) {
 				throw new DependencyNotFoundException(sprintf('%s dependency not binded.', $className));
 			}
 			$this->cache[$className] = $this->binds[$className]();
 		}
 
 		return $this->cache[$className];
+	}
+
+	/**
+	 * @param string $className
+	 * @return bool
+	 */
+	public function has($className)
+	{
+		return isset($this->binds[$className]);
 	}
 }
