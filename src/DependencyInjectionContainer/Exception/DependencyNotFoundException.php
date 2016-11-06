@@ -2,7 +2,7 @@
 
 namespace Systream\DependencyInjectionContainer\Exception;
 
-class DependencyNotFoundException extends \Exception
+class DependencyNotFoundException extends \RuntimeException
 {
 
 }

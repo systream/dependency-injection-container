@@ -7,6 +7,7 @@ use Systream\DependencyInjectionContainer;
 use Tests\Systream\Unit\Fixtures\FixtureTestInterface;
 use Tests\Systream\Unit\Fixtures\ObjectA;
 use Tests\Systream\Unit\Fixtures\ObjectB;
+use Tests\Systream\Unit\Fixtures\TestObjectA;
 
 class DependencyInjectionContainerTest extends \PHPUnit_Framework_TestCase
 {
@@ -106,5 +107,38 @@ class DependencyInjectionContainerTest extends \PHPUnit_Framework_TestCase
 	{
 		$di = new DependencyInjectionContainer();
 		$this->assertFalse($di->has(FixtureTestInterface::class));
+	}
+
+	/**
+	 * @test
+	 */
+	public function create_full()
+	{
+		$di = new DependencyInjectionContainer();
+		$di->bind(FixtureTestInterface::class, function () {
+			return new ObjectA();
+		});
+
+		$di->bind(ObjectB::class, function () {
+			return new ObjectB();
+		});
+
+		$testObject = $di->create(TestObjectA::class);
+		$this->assertInstanceOf(TestObjectA::class, $testObject);
+		$this->assertInstanceOf(ObjectA::class, $testObject->a);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \RuntimeException
+	 */
+	public function create_CannotBind()
+	{
+		$di = new DependencyInjectionContainer();
+		$di->bind(FixtureTestInterface::class, function () {
+			return new ObjectA();
+		});
+
+		$di->create(TestObjectA::class);
 	}
 }

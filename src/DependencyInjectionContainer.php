@@ -56,4 +56,31 @@ class DependencyInjectionContainer implements DependencyInjectionContainerInterf
 	{
 		return isset($this->binds[$className]);
 	}
+
+	/**
+	 * @param string $className
+	 * @return mixed
+	 */
+	public function create($className)
+	{
+		$class = new \ReflectionClass($className);
+		$constructorBindedParams = [];
+		foreach($class->getConstructor()->getParameters() as $index => $param) {
+
+			$paramClass = $param->getClass();
+			if ($paramClass and $this->has($paramClass->getName())) {
+				$constructorBindedParams[$index] = $this->get($paramClass->getName());
+				continue;
+			}
+
+			if ($param->isDefaultValueAvailable()) {
+				$constructorBindedParams[$index] = $param->getDefaultValue();
+				continue;
+			}
+
+			throw new \RuntimeException(sprintf('%s object %s param cannot bind.', $className, $paramClass));
+		}
+
+		return $class->newInstanceArgs($constructorBindedParams);
+	}
 }

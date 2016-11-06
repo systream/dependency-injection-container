@@ -24,4 +24,10 @@ interface DependencyInjectionContainerInterface
 	 * @return bool
 	 */
 	public function has($className);
+
+	/**
+	 * @param string $className
+	 * @return mixed
+	 */
+	public function create($className);
 }
