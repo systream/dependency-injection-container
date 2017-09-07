@@ -28,7 +28,7 @@ class DependencyInjectionContainer implements DependencyInjectionContainerInterf
 	public function bind($className, \Closure $closure)
 	{
 		if (!is_string($className) || empty(trim($className))) {
-			throw new InvalidClassNameException('Invalid class name: ' . $className);
+			throw new InvalidClassNameException('Invalid class name');
 		}
 		$this->binds[$className] = $closure;
 	}
