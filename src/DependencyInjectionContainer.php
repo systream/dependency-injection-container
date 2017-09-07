@@ -3,10 +3,12 @@
 namespace Systream;
 
 
+use Psr\Container\ContainerInterface;
 use Systream\DependencyInjectionContainer\DependencyInjectionContainerInterface;
 use Systream\DependencyInjectionContainer\Exception\DependencyNotFoundException;
+use Systream\DependencyInjectionContainer\Exception\InvalidClassNameException;
 
-class DependencyInjectionContainer implements DependencyInjectionContainerInterface
+class DependencyInjectionContainer implements DependencyInjectionContainerInterface, ContainerInterface
 {
 	/**
 	 * @var array
@@ -26,7 +28,7 @@ class DependencyInjectionContainer implements DependencyInjectionContainerInterf
 	public function bind($className, \Closure $closure)
 	{
 		if (!is_string($className) || empty(trim($className))) {
-			throw new \InvalidArgumentException('Invalid class name');
+			throw new InvalidClassNameException('Invalid class name: ' . $className);
 		}
 		$this->binds[$className] = $closure;
 	}
